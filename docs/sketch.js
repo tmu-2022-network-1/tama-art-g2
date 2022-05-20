@@ -13,7 +13,7 @@ let mapImg
 const latFrom = 35.999423
 const latTo = 35.360620
 const lonFrom = 138.890749
-const lonTo = 139.685048
+const lonTo = 139.670048
 let json = []
 let _text = []
 let mapWidth
