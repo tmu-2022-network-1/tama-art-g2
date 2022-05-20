@@ -10,10 +10,10 @@
 let points = []
 
 let mapImg
-const latFrom = 35.899228
-const latTo = 35.501494
-const lonFrom = 138.943093
-const lonTo = 139.593786
+const latFrom = 35.999423
+const latTo = 35.360620
+const lonFrom = 138.890749
+const lonTo = 139.685048
 let json = []
 let _text = []
 let mapWidth
@@ -24,7 +24,7 @@ let mapHFromTar
 let mapWTo
 let mapHFrom
 let mapHTo
-let scale = 1.2
+let scale = 1.7
 let easing = 0.04
 let OnThePoint = []
 let isPopupOpened = false
@@ -33,7 +33,7 @@ let isSelected = []
 // alert(location.search);
 
 function preload() {
-  mapImg = loadImage('./map_nishitokyo.png')
+  mapImg = loadImage('./map.png')
   getData()
 }
 
@@ -189,6 +189,7 @@ function mouseClicked() {
         'time',
       ).innerText = `開館時間: ${json[i].openingTime}`
       document.getElementById('comment').innerText = comments[i].comment
+      document.getElementById('tips').innerText = `tips! ${comments[i].tips}`
     }
   }
 }
