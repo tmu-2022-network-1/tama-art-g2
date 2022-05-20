@@ -1,11 +1,11 @@
 // ブラウザ検知用コード
-const agent = window.navigator.userAgent.toLowerCase()
+// const agent = window.navigator.userAgent.toLowerCase()
 
-if (agent.indexOf('chrome') == -1) {
-  alert(
-    'Chrome以外のブラウザでは正常に動作しない可能性があります。\nお手数おかけし大変申し訳ございませんが、動作が不安定な場合はChromeでのアクセスをお試しください。',
-  )
-}
+// if (agent.indexOf('chrome') == -1) {
+//   alert(
+//     'Chrome以外のブラウザでは正常に動作しない可能性があります。\nお手数おかけし大変申し訳ございませんが、動作が不安定な場合はChromeでのアクセスをお試しください。',
+//   )
+// }
 
 let points = []
 
