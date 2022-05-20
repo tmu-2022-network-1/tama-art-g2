@@ -30,6 +30,8 @@ let OnThePoint = []
 let isPopupOpened = false
 let isSelected = []
 
+// alert(location.search);
+
 function preload() {
   mapImg = loadImage('./map_nishitokyo.png')
   getData()
@@ -98,6 +100,7 @@ class SpotPoint {
     this.r = 30
     this.px = 0
     this.py = 0
+    // this.overlap = false
   }
 
   display() {
@@ -105,8 +108,21 @@ class SpotPoint {
       this.px = map(json[this.num].lon, lonFrom, lonTo, mapWFrom, mapWTo)
       this.py = map(json[this.num].lat, latFrom, latTo, mapHFrom, mapHTo)
 
+      for (let i = this.num; i < json.length; i++) {
+        if (dist(this.px, this.py, points[i].px, points[i].py) < 10) {
+          // this.overlap = true
+          this.px -= 25
+          this.py -= 25
+        }
+      }
+
       var tarR = 30
       OnThePoint[this.num] = false
+
+      if (this.overlap) {
+        this.px -= 25
+        this.py -= 25
+      }
 
       if (
         mouseX >= this.px - this.r / 2 &&
