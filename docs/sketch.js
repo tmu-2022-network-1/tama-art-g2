@@ -18,11 +18,9 @@ let mapHFrom
 let mapHTo
 let scale = 1.4
 let easing = 0.04
-let OnThePoint = []
 let isPopupOpened = false
-let isSelected = []
 let OnTheSummed = []
-let isZoomed = false
+let isSummedOpened = false
 
 function preload() {
   mapImg = loadImage('./map.png')
@@ -47,7 +45,7 @@ function draw() {
   mapWidth = windowWidth * scale
   mapHeight = mapWidth * (mapImg.height / mapImg.width)
 
-  if (!isPopupOpened && !isZoomed) {
+  if (!isPopupOpened && !isSummedOpened) {
     mapWFromTar = windowWidth - mapWidth / 2 - mouseX
     mapHFromTar = windowHeight - mapHeight / 2 - mouseY
   }
@@ -69,6 +67,16 @@ function draw() {
   for (let i = 0; i < summed.length; i++) {
     summed[i].display()
   }
+
+  for (let i = 0; i < points.length; i++) {
+    // if (OnThePoint[i]) {
+    if (points[i].mouseHover) {
+      fill(30)
+      textSize(20)
+      textAlign(LEFT, CENTER)
+      text(json[points[i].num].name, points[i].px + 30, points[i].py)
+    }
+  }
 }
 
 const getData = async () => {
@@ -77,9 +85,6 @@ const getData = async () => {
   )
   if (response.ok) {
     json = await response.json()
-    for (let i = 0; i < json.length; i++) {
-      points[i] = new SpotPoint(i)
-    }
   }
 
   const response2 = await fetch(
@@ -87,6 +92,10 @@ const getData = async () => {
   )
   if (response2.ok) {
     comments = await response2.json()
+  }
+
+  for (let i = 0; i < json.length; i++) {
+    points[i] = new SpotPoint(i)
   }
 
   await isMergedCheck()
@@ -106,6 +115,8 @@ const isMergedCheck = async () => {
             summed.length,
             (parseFloat(json[i].lon) + parseFloat(json[j].lon)) / 2,
             (parseFloat(json[i].lat) + parseFloat(json[j].lat)) / 2,
+            i,
+            j,
           )
         }
       }
@@ -138,7 +149,28 @@ class SpotPoint {
     this.r = 30
     this.px = 0
     this.py = 0
+    this.mouseHover = false
+    this.isSelected = false
     this.isMerged = false
+    this.fullHTML = `
+      <h2 id="name">${json[i].name}</h2>
+      <p id="address">${json[i].address}</p>
+      <p id="station">最寄り駅: ${json[i].station}</p>
+      <p id="holiday">定休日: ${json[i].closingDay}</p>
+      <p id="tel">TEL: ${json[i].telephone}</p>
+      <a id="url" href="${json[i].url}" target="_blank">ホームページ</a>
+      <p id="time">開館時間: ${json[i].openingTime}</p>
+      <p id="comment">${comments[i].comment}</p>
+      <p id="tips">tips! ${comments[i].tips}</p>
+      <span id="cross" onclick="crossClose()"></span>
+    `
+    this.listHTML = document.createElement('a')
+    this.listHTML.classList.add('list-item')
+    this.listHTML.setAttribute('onclick', `selectList(${this.num})`)
+    this.listHTML.innerHTML = `
+        <h2>${json[i].name}</h2>
+        <h3>></h3>
+    `
   }
 
   display() {
@@ -147,7 +179,7 @@ class SpotPoint {
       this.py = map(json[this.num].lat, latFrom, latTo, mapHFrom, mapHTo)
 
       var tarR = 30
-      OnThePoint[this.num] = false
+      this.mouseHover = false
 
       if (
         mouseX >= this.px - this.r / 2 &&
@@ -157,10 +189,10 @@ class SpotPoint {
       ) {
         cursor('pointer')
         tarR = 40
-        OnThePoint[this.num] = true
+        this.mouseHover = true
       }
       fill(0, 0, 100, 100)
-      if (isSelected[this.num]) {
+      if (this.isSelected) {
         fill(200, 50, 100, 100)
         tarR = 40
       }
@@ -180,28 +212,44 @@ class SpotPoint {
 }
 
 class SummedPoint {
-  constructor(i, lon, lat) {
+  constructor(i, lon, lat, id1, id2) {
     this.num = i
     this.r = 40
     this.lon = lon
     this.lat = lat
     this.px = 0
     this.py = 0
-    this.elements = 2
+    this.isSelected = false
     this.isMerged = false
+    this.elements = [id1, id2]
+    this.listItem =
+      `<span id="cross" onclick="crossClose()"></span>` +
+      points[id1].listHTML.outerHTML +
+      points[id2].listHTML.outerHTML
   }
 
   addElement(num) {
-    this.elements++
-    this.lon = (this.lon * (this.elements - 1) + json[num].lon) / this.elements
-    this.lat = (this.lat * (this.elements - 1) + json[num].lat) / this.elements
+    this.elements[this.elements.length] = num
+    this.listItem += points[num].listHTML.outerHTML
+    this.lon =
+      (this.lon * (this.elements.length - 1) + json[num].lon) /
+      this.elements.length
+    this.lat =
+      (this.lat * (this.elements.length - 1) + json[num].lat) /
+      this.elements.length
     points[num].isMerged = true
   }
 
   merge(target) {
-    this.elements += target.elements
-    this.lon = (this.lon * (this.elements - 1) + target.lon) / this.elements
-    this.lat = (this.lat * (this.elements - 1) + target.lat) / this.elements
+    this.elements = this.elements.concat(target.elements)
+    this.listItem = this.listItem + target.listItem
+    this.lon =
+      (this.lon * (this.elements.length - 1) + target.lon) /
+      this.elements.length
+    this.lat =
+      (this.lat * (this.elements.length - 1) + target.lat) /
+      this.elements.length
+
     target.isMerged = true
   }
 
@@ -224,6 +272,10 @@ class SummedPoint {
         OnTheSummed[this.num] = true
       }
       fill(0, 0, 100, 100)
+      if (this.isSelected) {
+        fill(200, 50, 100, 100)
+        tarR = 50
+      }
 
       let disR = tarR - this.r
       this.r += disR * 0.25
@@ -232,21 +284,23 @@ class SummedPoint {
       drawingContext.shadowColor = color(0, 0, 0, 30)
       drawingContext.shadowBlur = 10
       drawingContext.shadowOffsetY = 3
-      fill(255)
       ellipse(this.px, this.py, this.r, this.r)
       pop()
-      fill(50)
-      text(this.elements, this.px, this.py)
+      fill(30)
+      textSize(20)
+      textAlign(CENTER, CENTER)
+      text(this.elements.length, this.px, this.py)
     }
   }
 }
 
 const popup = document.getElementById('popup')
+const summedPopup = document.getElementById('popup')
 
 function mouseClicked() {
-  for (let i = 0; i < json.length; i++) {
-    if (OnThePoint[i] == true) {
-      if (isPopupOpened) {
+  for (let i = 0; i < points.length; i++) {
+    if (points[i].mouseHover == true) {
+      if (isPopupOpened || isSummedOpened) {
         crossClose()
       }
       mapWFromTar =
@@ -254,52 +308,63 @@ function mouseClicked() {
       mapHFromTar =
         windowHeight / 2 - map(json[i].lat, latFrom, latTo, 0, mapHeight)
       isPopupOpened = true
-      isSelected[i] = true
+      points[i].isSelected = true
       window.setTimeout(function () {
-        popup.style.display = "block";
+        popup.style.display = 'block'
         popup.classList.toggle('visible')
         popup.classList.toggle('invisible')
-
-        document.getElementById('name').innerText = json[i].name
-        document.getElementById('address').innerText = json[i].address
-        document.getElementById(
-          'station',
-        ).innerText = `最寄り駅: ${json[i].station}`
-        document.getElementById(
-          'holiday',
-        ).innerText = `定休日: ${json[i].closingDay}`
-        document.getElementById('tel').innerText = `TEL: ${json[i].telephone}`
-        document.getElementById(
-          'url',
-        ).innerHTML = `<a href="${json[i].url}" target="_blank">ホームページ</a>`
-        document.getElementById(
-          'time',
-        ).innerText = `開館時間: ${json[i].openingTime}`
-        document.getElementById('comment').innerText = comments[i].comment
-        document.getElementById('tips').innerText = `tips! ${comments[i].tips}`
+        popup.innerHTML = points[i].fullHTML
       }, 400)
     }
   }
   for (let i = 0; i < summed.length; i++) {
     if (OnTheSummed[i] == true) {
+      if (isPopupOpened || isSummedOpened) {
+        crossClose()
+      }
       mapWFromTar =
-        windowWidth / 2 - map(summed[i].lon, lonFrom, lonTo, 0, mapWidth)
+        windowWidth / 2 - map(summed[i].lon, lonFrom, lonTo, 0, mapWidth) + 240
       mapHFromTar =
         windowHeight / 2 - map(summed[i].lat, latFrom, latTo, 0, mapHeight)
-      isZoomed = true
+      isSummedOpened = true
+      summed[i].isSelected = true
+      window.setTimeout(function () {
+        summedPopup.style.display = 'block'
+        summedPopup.classList.toggle('visible')
+        summedPopup.classList.toggle('invisible')
+        summedPopup.innerHTML = summed[i].listItem
+      }, 400)
     }
   }
 }
 
+function selectList(num) {
+  popup.innerHTML = points[num].fullHTML
+}
+
 function crossClose() {
-  isPopupOpened = false
-  popup.classList.toggle('visible')
-  popup.classList.toggle('invisible')
-  window.setTimeout(function () {
-    popup.style.display = "none";
-  },400)
-  for (let i = 0; i < json.length; i++) {
-    isSelected[i] = false
+  if (isPopupOpened) {
+    popup.classList.toggle('visible')
+    popup.classList.toggle('invisible')
+    isPopupOpened = false
+    window.setTimeout(function () {
+      popup.style.display = 'none'
+    }, 400)
+    for (let i = 0; i < points.length; i++) {
+      points[i].isSelected = false
+    }
+  }
+
+  if (isSummedOpened) {
+    summedPopup.classList.toggle('visible')
+    summedPopup.classList.toggle('invisible')
+    isSummedOpened = false
+    window.setTimeout(function () {
+      summedPopup.style.display = 'none'
+    }, 400)
+    for (let i = 0; i < summed.length; i++) {
+      summed[i].isSelected = false
+    }
   }
 }
 

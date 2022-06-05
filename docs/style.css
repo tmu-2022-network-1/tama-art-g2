@@ -20,8 +20,7 @@ header h1{
   float: right;
 }
 
-#popup{
-  /* display: none; */
+#popup, #summed-popup{
   position: absolute;
   background-color: white;
   width: 400px;
@@ -35,12 +34,12 @@ header h1{
   overflow: scroll;
 }
 
-#popup.visible{
+#popup.visible, #summed-popup.visible{
   animation: appear .5s forwards ease-out;
   display: block;
 }
 
-#popup.invisible{
+#popup.invisible, #summed-popup.invisible{
   animation: disappear .5s forwards ease-out;
 }
 
@@ -65,6 +64,27 @@ header h1{
     transform: translateX(-100px);
   }
 }
+
+#summed-popup{
+  animation: appear .5s forwards ease-out;
+}
+
+.list-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+  /* background-color: #333; */
+}
+
+.list-item:hover {
+  cursor: pointer;
+  /* animation: disappear .5s forwards ease-out; */
+}
+
+
+
 
 #cross {
   display: flex;
@@ -99,7 +119,7 @@ header h1{
   margin-bottom: 25px;
 }
 
-p,a{
+p, a{
   font-size: 20px;
   line-height: 2;
   margin-bottom: 20px;
