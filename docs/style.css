@@ -18,6 +18,7 @@ header h1{
   line-height: 100px;
   margin-right: 50px;
   float: right;
+  color: white;
 }
 
 #popup, #summed-popup{

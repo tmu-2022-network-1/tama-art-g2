@@ -80,14 +80,15 @@ function draw() {
 
 const getData = async () => {
   const response = await fetch(
-    'https://script.googleusercontent.com/macros/echo?user_content_key=LKlrtcRrjID9Dymgw8IUFZPz5MIDcRnb9MFl6zGtapu6mJf3MDxQcDLQdIYmmtIqQ6Xs5cQ-9KIbUHHADQWO9DLeUgj8roy0m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnEmHHJxhC_oe1Qmd2R-eXjoXgTxWUu4HYlJom6QacPSgNEmyKwSz32FPG-bn2sJSQBMlTA-c0F3yHHty0meKf-_VOxuX8xhGctz9Jw9Md8uu&lib=MabRb0sHcOdgcukW2MiMwBlocHvvcqee0',
+    // 'https://script.googleusercontent.com/macros/echo?user_content_key=LKlrtcRrjID9Dymgw8IUFZPz5MIDcRnb9MFl6zGtapu6mJf3MDxQcDLQdIYmmtIqQ6Xs5cQ-9KIbUHHADQWO9DLeUgj8roy0m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnEmHHJxhC_oe1Qmd2R-eXjoXgTxWUu4HYlJom6QacPSgNEmyKwSz32FPG-bn2sJSQBMlTA-c0F3yHHty0meKf-_VOxuX8xhGctz9Jw9Md8uu&lib=MabRb0sHcOdgcukW2MiMwBlocHvvcqee0',
+    'https://script.google.com/macros/s/AKfycbxhZ4ww0rLhp6A72xu4HznL5g-cA6BqosnggI2xlzzqrQKqVbq2HTLZO8MpdnaIkZLG_Q/exec'
   )
   if (response.ok) {
     json = await response.json()
   }
 
   const response2 = await fetch(
-    'https://script.google.com/macros/s/AKfycbxYb6A56yxS_gLG_AkWxMODItAzBrzYYT8CT3Yvxel3UlgNhau-sJnH1ZbFM-Ho_GcQkA/exec?sheet=group2',
+    'https://script.google.com/macros/s/AKfycbxhZ4ww0rLhp6A72xu4HznL5g-cA6BqosnggI2xlzzqrQKqVbq2HTLZO8MpdnaIkZLG_Q/exec?sheet=group2'
   )
   if (response2.ok) {
     comments = await response2.json()
@@ -192,7 +193,7 @@ class SpotPoint {
       }
       fill(0, 0, 100, 100)
       if (this.isSelected) {
-        fill(200, 50, 100, 100)
+        fill(200, 20, 100, 100)
         tarR = 40
       }
 
@@ -272,7 +273,7 @@ class SummedPoint {
       }
       fill(0, 0, 100, 100)
       if (this.isSelected) {
-        fill(200, 50, 100, 100)
+        fill(200, 20, 100, 100)
         tarR = 50
       }
 
