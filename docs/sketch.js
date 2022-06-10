@@ -56,7 +56,7 @@ function draw() {
   mapWTo = mapWFrom + mapWidth
   mapHTo = mapHFrom + mapHeight
 
-  background(175,18,53)
+  background(175, 18, 53)
   image(mapImg, mapWFrom, mapHFrom, mapWidth, mapHeight)
 
   cursor('default')
@@ -80,15 +80,14 @@ function draw() {
 
 const getData = async () => {
   const response = await fetch(
-    // 'https://script.googleusercontent.com/macros/echo?user_content_key=LKlrtcRrjID9Dymgw8IUFZPz5MIDcRnb9MFl6zGtapu6mJf3MDxQcDLQdIYmmtIqQ6Xs5cQ-9KIbUHHADQWO9DLeUgj8roy0m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnEmHHJxhC_oe1Qmd2R-eXjoXgTxWUu4HYlJom6QacPSgNEmyKwSz32FPG-bn2sJSQBMlTA-c0F3yHHty0meKf-_VOxuX8xhGctz9Jw9Md8uu&lib=MabRb0sHcOdgcukW2MiMwBlocHvvcqee0',
-    'https://script.google.com/macros/s/AKfycbxhZ4ww0rLhp6A72xu4HznL5g-cA6BqosnggI2xlzzqrQKqVbq2HTLZO8MpdnaIkZLG_Q/exec'
+    'https://script.google.com/macros/s/AKfycbxhZ4ww0rLhp6A72xu4HznL5g-cA6BqosnggI2xlzzqrQKqVbq2HTLZO8MpdnaIkZLG_Q/exec',
   )
   if (response.ok) {
     json = await response.json()
   }
 
   const response2 = await fetch(
-    'https://script.google.com/macros/s/AKfycbxhZ4ww0rLhp6A72xu4HznL5g-cA6BqosnggI2xlzzqrQKqVbq2HTLZO8MpdnaIkZLG_Q/exec?sheet=group2'
+    'https://script.google.com/macros/s/AKfycbxhZ4ww0rLhp6A72xu4HznL5g-cA6BqosnggI2xlzzqrQKqVbq2HTLZO8MpdnaIkZLG_Q/exec?sheet=group2',
   )
   if (response2.ok) {
     comments = await response2.json()
@@ -120,16 +119,9 @@ const isMergedCheck = async () => {
           )
         }
       }
-      for (let j = 0; j < summed.length; j++) {
-        if (
-          dist(json[i].lon, json[i].lat, summed[j].lon, summed[j].lat) < 0.02 &&
-          !points[i].isMerged
-        ) {
-          // summed[j].addElement(i)
-        }
-      }
     }
   }
+
   for (let i = 1; i < summed.length; i++) {
     for (let j = i - 1; j >= 0; j--) {
       if (
@@ -138,6 +130,17 @@ const isMergedCheck = async () => {
         !summed[j].isMerged
       ) {
         summed[i].merge(summed[j])
+      }
+    }
+  }
+
+  for (let i = 0; i < summed.length; i++) {
+    for (let j = 0; j < points.length; j++) {
+      if (
+        dist(summed[i].lon, summed[i].lat, json[j].lon, json[j].lat) < 0.02 &&
+        !points[j].isMerged
+      ) {
+        summed[i].addElement(j)
       }
     }
   }
@@ -230,12 +233,12 @@ class SummedPoint {
 
   addElement(num) {
     this.elements[this.elements.length] = num
-    this.listItem += points[num].listHTML.outerHTML
+    this.listItem = this.listItem + points[num].listHTML.outerHTML
     this.lon =
-      (this.lon * (this.elements.length - 1) + json[num].lon) /
+      (this.lon * (this.elements.length - 1) + parseFloat(json[num].lon)) /
       this.elements.length
     this.lat =
-      (this.lat * (this.elements.length - 1) + json[num].lat) /
+      (this.lat * (this.elements.length - 1) + parseFloat(json[num].lat)) /
       this.elements.length
     points[num].isMerged = true
   }
@@ -244,10 +247,12 @@ class SummedPoint {
     this.elements = this.elements.concat(target.elements)
     this.listItem = this.listItem + target.listItem
     this.lon =
-      (this.lon * (this.elements.length - 1) + target.lon) /
+      (this.lon * (this.elements.length - target.elements.length) +
+        target.lon * target.elements.length) /
       this.elements.length
     this.lat =
-      (this.lat * (this.elements.length - 1) + target.lat) /
+      (this.lat * (this.elements.length - target.elements.length) +
+        target.lat * target.elements.length) /
       this.elements.length
 
     target.isMerged = true
