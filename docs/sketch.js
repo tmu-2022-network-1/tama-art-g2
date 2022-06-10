@@ -2,10 +2,10 @@ let points = []
 let summed = []
 
 let mapImg
-const latFrom = 35.999423
-const latTo = 35.36062
-const lonFrom = 138.890749
-const lonTo = 139.670048
+const latFrom = 35.899228
+const latTo = 35.501494
+const lonFrom = 138.943093
+const lonTo = 139.593786
 let json = []
 let _text = []
 let mapWidth
@@ -16,7 +16,7 @@ let mapHFromTar
 let mapWTo
 let mapHFrom
 let mapHTo
-let scale = 1.4
+let scale = 1.2
 let easing = 0.04
 let isPopupOpened = false
 let OnTheSummed = []
@@ -56,7 +56,7 @@ function draw() {
   mapWTo = mapWFrom + mapWidth
   mapHTo = mapHFrom + mapHeight
 
-  background(255)
+  background(175,18,53)
   image(mapImg, mapWFrom, mapHFrom, mapWidth, mapHeight)
 
   cursor('default')
@@ -69,9 +69,8 @@ function draw() {
   }
 
   for (let i = 0; i < points.length; i++) {
-    // if (OnThePoint[i]) {
     if (points[i].mouseHover) {
-      fill(30)
+      fill(230)
       textSize(20)
       textAlign(LEFT, CENTER)
       text(json[points[i].num].name, points[i].px + 30, points[i].py)
