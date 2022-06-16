@@ -164,7 +164,7 @@ class SpotPoint {
       <a id="url" href="${json[i].url}" target="_blank">ホームページ</a>
       <p id="time">開館時間: ${json[i].openingTime}</p>
       <p id="comment">${comments[i].comment}</p>
-      <p id="tips">tips! ${comments[i].tips}</p>
+      <p id="tips">tips!<br \>${comments[i].tips}</p>
       <span id="cross" onclick="crossClose()"></span>
     `
     this.listHTML = document.createElement('a')

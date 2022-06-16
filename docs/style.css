@@ -76,15 +76,7 @@ header h1{
   align-items: center;
   width: 100%;
   margin-top: 30px;
-  /* background-color: #333; */
 }
-
-.list-item:hover {
-  cursor: pointer;
-  /* animation: disappear .5s forwards ease-out; */
-}
-
-
 
 
 #cross {
