@@ -15,8 +15,23 @@ header{
 }
 
 header h1{
+  position: absolute;
   line-height: 100px;
-  margin-right: 50px;
+  text-align: right;
+  /* margin-right: 50px; */
+  /* float: right; */
+  top: 0px;
+  right: 30px;
+  color: white;
+}
+
+header p{
+  position: absolute;
+  text-align: right;
+  /* margin-top: 60px; */
+  /* margin-right: -100px; */
+  top: 70px;
+  right: 30px;
   float: right;
   color: white;
 }
