@@ -78,6 +78,10 @@ header h1{
   margin-top: 30px;
 }
 
+.list-item:hover{
+  cursor: pointer;
+}
+
 
 #cross {
   display: flex;
