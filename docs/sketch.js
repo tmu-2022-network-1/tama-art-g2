@@ -97,7 +97,7 @@ const getData = async () => {
     points[i] = new SpotPoint(i)
   }
 
-  // await isMergedCheck()
+  await isMergedCheck()
 }
 
 const isMergedCheck = async () => {
